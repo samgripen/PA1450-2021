@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+body {background-color: powderblue;}
+h1   {color: black;}
+p    {color: red;}
+.content {
+  margin-left: 100px;
+  margin-right: 100px;
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 10px;
+}
+.content h2 {
+    padding-left: 20px;
+}
+.all_graph {
+    display: flex;
+    flex-direction: row;
+}
+.chart {
+    -ms-flex: 1;
+    flex :1;
+    
+}
+</style>
+
+    <meta charset="UTF-8">
+    <title>COVID-19</title>
+</head>
+
+<body>
+<div class="content">
+
+ <h1 style="float: center; text-align:center;">COVID-19 DataLab</h1>
+
+<h2>Confirmed cases : {{data['Confirmed']}} </h2>  
+<h2>Total deaths :  {{data['Deaths']}}</h2>  
+<h2>Total Recovery : {{data['Recovered']}}</h2>
+<div classe="all_graph">
+<div id="chart_confirmed" class="chart"></div>
+<div id="chart_pie" class="chart" ></div>
+</div>
+
+
+<h1 style="float: center; text-align:center;">Filter data by contry<h1>
+
+ <select id="sel" >
+    {% for c in data['countries'] %}
+   
+    <option value= "{{c['value']}}" >{{ c['label']}}</option>"
+    {% endfor %}
+ </select>
+<h2 id="selected_country"></h2>
+<h2 id="selected_country1"></h2>
+<h2 id="selected_country2"></h2>
+<div classe="all_graph">
+<div id="chart" class="chart" ></div>
+<div id="chart_pie2" class="chart"></div>
+</div>
+</div>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<script type="text/javascript">
+
+document.getElementById('sel').onchange = function () {
+    var country=document.getElementById('sel').value;
+
+    fetch('/wold/'+country).then(function (response){
+        response.json().then(function(d){
+            document.getElementById('selected_country').innerHTML='Confirmed cases : '+d.Confirmed;
+            document.getElementById('selected_country1').innerHTML='Deaths : '+d.Deaths;
+            document.getElementById('selected_country2').innerHTML='Recovered : '+d.Recovered;
+        });
+    });
+    
+    fetch('/graph/'+country).then(function (response){
+        
+        response.json().then(function(d){
+            var graphs = d;
+            Plotly.plot('chart',graphs,{});
+        });
+    });
+    fetch('/pie/'+country).then(function (response){
+        
+        response.json().then(function(d){
+            var graphs = d;
+            Plotly.plot('chart_pie2',graphs,{});
+        });
+    });
+}
+window.onload=function(){
+     var country=document.getElementById('sel').value;
+    fetch('/pie/'+'wold').then(function (response){
+        
+        response.json().then(function(d){
+            var graphs = d;
+            Plotly.plot('chart_pie',graphs,{});
+        });
+    });
+    fetch('/wold/'+country).then(function (response){
+        response.json().then(function(d){
+            document.getElementById('selected_country').innerHTML='Confirmed cases : '+d.Confirmed;
+            document.getElementById('selected_country1').innerHTML='Deaths : '+d.Deaths;
+            document.getElementById('selected_country2').innerHTML='Recovered : '+d.Recovered;
+        });
+        
+    });
+     fetch('/pie/'+country).then(function (response){
+        
+        response.json().then(function(d){
+            var graphs = d;
+            Plotly.plot('chart_pie2',graphs,{});
+        });
+    });
+    fetch('/graph/'+country).then(function (response){
+        
+        response.json().then(function(d){
+            var graphs = d;
+            Plotly.plot('chart',graphs,{});
+        });
+    });
+    
+    fetch('/graph/'+'wold').then(function (response){
+        
+        response.json().then(function(d){
+            var graphs = d;
+            Plotly.plot('chart_confirmed',graphs,{});
+        });
+    });
+   
+}
+</script>
+
+</body>
+</html>
