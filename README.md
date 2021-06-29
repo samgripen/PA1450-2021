@@ -1,4 +1,4 @@
-# PA1450
+# PA1450-COVID19 Data Center
 ### Project for the course PA1450 - Software Development at BTH, Sweden
 ***
 
